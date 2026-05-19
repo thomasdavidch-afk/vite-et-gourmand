@@ -4,6 +4,7 @@ import Route from "./Route.js";
 export const allRoutes = [
     new Route("/", "Accueil", "/pages/home.html"),
     new Route("/nosmenus", "Nos Menus", "/pages/nosmenus.html"),
+    new Route("/MenuJoyeuxNoelIndien", "Menu Joyeux Noel Indien", "/pages/MenuJoyeuxNoelIndien.html"),
 ];
 
 //Le titre s'affiche comme ceci : Route.titre - websitename
