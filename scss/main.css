@@ -11979,10 +11979,9 @@ textarea.form-control-lg {
   .d-print-none {
     display: none !important;
   }
-}/*# sourceMappingURL=main.css.map */
-
+}
 .navbar-brand img {
-  height: 60px;
+  height: 50px;
   width: auto;
 }
 
@@ -11990,3 +11989,24 @@ textarea.form-control-lg {
   font-weight: bold;
   font-size: 16px;
 }
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+main {
+  margin-bottom: 250px;
+}
+
+footer {
+  font-size: 12px;
+  padding: 16px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+footer div {
+  line-height: 1.4;
+}/*# sourceMappingURL=main.css.map */
