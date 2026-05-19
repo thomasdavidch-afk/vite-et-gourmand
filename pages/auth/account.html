@@ -1,0 +1,53 @@
+<section class="hero-signin d-flex align-items-center justify-content-center text-center text-white">
+    <div class="container">
+        <h1 class="fw-bold">Mon compte</h1>
+    </div>
+</section>
+
+<div class="container py-5">
+    <form>
+        <div class="mb-3">
+            <label for="NameInput" class="form-label">Nom</label>
+            <input type="text" class="form-control" id="NameInput" placeholder="Votre nom" value="Doe">
+        </div>
+        <div class="mb-3">
+            <label for="SurnameInput" class="form-label">Prénom</label>
+            <input type="text" class="form-control" id="SurnameInput" placeholder="Votre prénom" value="John">
+        </div>
+        <div class="mb-3">
+            <label for="AdresseInput" class="form-label">Adresse</label>
+            <input type="text" class="form-control" id="AdresseInput" placeholder="Votre adresse" value="123 Rue de la Pomme">
+        </div>
+        <div class="mb-3">
+            <label for="VilleInput" class="form-label">Ville</label>
+            <input type="text" class="form-control" id="VilleInput" placeholder="Votre ville" value="Lyon">
+        </div>
+        <div class="mb-3">
+            <label for="ZipInput" class="form-label">Code Postal</label>
+            <input type="text" class="form-control" id="ZipInput" value="69000">
+        </div>
+        <div class="mb-3">
+            <label for="AllergieInput" class="form-label">Allergies</label>
+            <input type="text" class="form-control" id="AllergieInput" placeholder="Vos allergies (fruits de mer...)" value="Cacahuètes">
+        </div>
+        <div class="mb-3">
+            <label for="NbConvivesInput" class="form-label">Nombre de convives habituels</label>
+            <input type="number" class="form-control" id="NbConvivesInput" placeholder="Combien êtes-vous habituellement ?" value="4">
+        </div>
+        <div class="mb-3">
+            <label for="PhoneInput" class="form-label">Numéro de téléphone</label>
+            <input type="tel" class="form-control" id="PhoneInput" placeholder="0600000000" value="0633341802">
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Modifier vos informations</button>
+            <a href="/allCommandes"class="btn btn-secondary w-auto text-white">Voir mes commandes</a>
+            <button type="button" class="btn btn-danger">Supprimer mon compte</button>
+        </div>
+    </form>
+    <div class="text-center pt-3">
+        <a href="/editPassword">Cliquez ici pour modifier votre mot de passe</a>
+
+    </div>
+</div>
+
+

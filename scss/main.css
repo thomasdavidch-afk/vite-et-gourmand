@@ -11996,7 +11996,7 @@ html {
 }
 
 main {
-  margin-bottom: 250px;
+  margin-bottom: 200px;
 }
 
 footer {
@@ -12144,4 +12144,10 @@ footer div {
 .hero-menus {
   height: 200px;
   background: url("../ressources/traiteurmenus.jpg") center/cover no-repeat;
+}
+
+/*PAGE SIGN IN*/
+.hero-signin {
+  height: 200px;
+  background: url("../ressources/hero_background.jpg") center/cover no-repeat;
 }/*# sourceMappingURL=main.css.map */
