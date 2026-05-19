@@ -11980,3 +11980,13 @@ textarea.form-control-lg {
     display: none !important;
   }
 }/*# sourceMappingURL=main.css.map */
+
+.navbar-brand img {
+  height: 60px;
+  width: auto;
+}
+
+.nav-link {
+  font-weight: bold;
+  font-size: 16px;
+}
