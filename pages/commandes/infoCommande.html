@@ -13,50 +13,50 @@
     </p>
 
     <!-- FORMULAIRE -->
-    <form action="/choixCommande" methode="GET">
+    <form id="formInfoCommande" action="/choixCommande" method="GET">
 
         <div class="row g-4">
 
         <!-- NOM COMPLET -->
         <div class="col-12">
             <label class="form-label">Nom Complet</label>
-            <input type="text" class="form-control">
+            <input type="text" class="form-control" id="nomComplet">
         </div>
 
         <!-- TELEPHONE -->
         <div class="col-md-6">
             <label class="form-label">Numéro de téléphone</label>
-            <input type="tel" class="form-control">
+            <input type="tel" class="form-control" id="telephone">
         </div>
 
         <!-- EMAIL -->
         <div class="col-md-6">
             <label class="form-label">Email</label>
-            <input type="email" class="form-control">
+            <input type="email" class="form-control" id="email">
         </div>
 
         <!-- ADRESSE -->
         <div class="col-12">
             <label class="form-label">Adresse de la prestation</label>
-            <textarea class="form-control" rows="3"></textarea>
+            <textarea class="form-control" rows="3" id="adresse"></textarea>
         </div>
 
         <!-- DATE -->
         <div class="col-md-6">
             <label class="form-label">Date de la prestation</label>
-            <input type="date" class="form-control">
+            <input type="date" class="form-control" id="date">
         </div>
 
         <!-- HEURE -->
         <div class="col-md-6">
             <label class="form-label">Heure de la prestation</label>
-            <input type="time" class="form-control">
+            <input type="time" class="form-control" id="heure">
         </div>
 
         <!-- AUTRES INFOS -->
         <div class="col-12">
             <label class="form-label">Autres informations ou demandes</label>
-            <textarea class="form-control" rows="4"></textarea>
+            <textarea class="form-control" rows="4" id="autresInfos"></textarea>
         </div>
 
         </div>

@@ -1,5 +1,6 @@
 import Route from "./Route.js";
 
+
 //Définir ici vos routes
 export const allRoutes = [
     new Route("/", "Accueil", "/pages/home.html", []),
@@ -10,7 +11,7 @@ export const allRoutes = [
     new Route("/account", "Mon Compte", "/pages/auth/account.html", ["client", "admin", "employe"]),
     new Route("/editPassword", "Changement mot de passe", "/pages/auth/editPassword.html", ["client", "admin", "employe"]),
     new Route("/allCommandes", "Vos commandes", "/pages/commandes/allCommandes.html", ["client"]),
-    new Route("/infoCommande", "Etape 1 : Commande", "/pages/commandes/infoCommande.html", []),
+    new Route("/infoCommande", "Etape 1 : Commande", "/pages/commandes/infoCommande.html", [], "/js/order/infoCommande.js"),
     new Route("/choixCommande", "Etape 2 : Commande", "/pages/commandes/choixCommande.html", []),
     new Route("/confirmationCommande", "Etape 3 : Confirmation Commande", "/pages/commandes/confirmationCommande.html", []),
     new Route("/contact", "Contactez-nous", "/pages/contact.html", []),
