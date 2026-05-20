@@ -9,42 +9,69 @@
         <div class="mb-3">
             <label for="NameInput" class="form-label">Nom</label>
             <input type="text" class="form-control" id="NameInput" placeholder="Votre nom">
+            <div class="invalid-feedback">
+                Le champ est requis.
+            </div>
         </div>
         <div class="mb-3">
             <label for="SurnameInput" class="form-label">Prénom</label>
             <input type="text" class="form-control" id="SurnameInput" placeholder="Votre prénom">
+            <div class="invalid-feedback">
+                Le champ est requis.
+            </div>
         </div>
         <div class="mb-3">
             <label for="AdresseInput" class="form-label">Adresse</label>
             <input type="text" class="form-control" id="AdresseInput" placeholder="Votre adresse">
+            <div class="invalid-feedback">
+                Le champ est requis.
+            </div>
         </div>
         <div class="mb-3">
-            <label for="VilleInput" class="form-label">Ville</label>
-            <input type="text" class="form-control" id="VilleInput" placeholder="Votre ville">
+            <label for="CityInput" class="form-label">Ville</label>
+            <input type="text" class="form-control" id="CityInput" placeholder="Votre ville">
+            <div class="invalid-feedback">
+                Le champ est requis.
+            </div>
         </div>
         <div class="mb-3">
             <label for="ZipInput" class="form-label">Code Postal</label>
             <input type="text" class="form-control" id="ZipInput">
+            <div class="invalid-feedback">
+                Le Code Postal n'est pas au bon format.
+            </div>
         </div>
         <div class="mb-3">
             <label for="EmailInput" class="form-label">Email</label>
             <input type="email" class="form-control" id="EmailInput" placeholder="test@mail.fr">
+            <div class="invalid-feedback">
+                Le mail n'est pas au bon format.
+            </div>
         </div>
         <div class="mb-3">
             <label for="PhoneInput" class="form-label">Numéro de téléphone</label>
             <input type="tel" class="form-control" id="PhoneInput" placeholder="0600000000">
+            <div class="invalid-feedback">
+                Le champ est requis au format France.
+            </div>
         </div>
         <div class="mb-3">
             <label for="PasswordInput" class="form-label">Mot de passe</label>
             <input type="password" class="form-control" id="PasswordInput">
+            <div class="invalid-feedback">
+                Le mot de passe n'est pas assez robuste : Au moins 8 caractères, 1 majuscule, une minuscule, un chiffre et un caractère spécial.
+            </div>
         </div>
         <div class="mb-3">
             <label for="ValidatePasswordInput" class="form-label">Valider mon mot de passe</label>
             <input type="password" class="form-control" id="ValidatePasswordInput">
+            <div class="invalid-feedback">
+                Le mot de passe saisie doit être identique au mot de passe ci-dessus.
+            </div>
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-primary">S'inscire</button>
+            <button type="submit" class="btn btn-primary" id="btn-validation-inscription" disabled>S'inscire</button>
         </div>
 
         <div class="text-center pt-3">

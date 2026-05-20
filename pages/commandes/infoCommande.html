@@ -1,0 +1,73 @@
+<section class="container py-5">
+
+    <!-- TITRE -->
+    <h2 class="mb-4">Etapes 1 : Informations pour la commande</h2>
+
+    <!-- INFOS -->
+    <p class="mb-1">
+        Merci de remplir les champs suivant
+    </p>
+    <p class="text-danger small mb-4">
+        <strong>Attention :</strong> Si livraison en dehors de Bordeaux, facturation de 5 euros
+        (majoré de 59 centimes par km parcouru)
+    </p>
+
+    <!-- FORMULAIRE -->
+    <form action="/choixCommande" methode="GET">
+
+        <div class="row g-4">
+
+        <!-- NOM COMPLET -->
+        <div class="col-12">
+            <label class="form-label">Nom Complet</label>
+            <input type="text" class="form-control">
+        </div>
+
+        <!-- TELEPHONE -->
+        <div class="col-md-6">
+            <label class="form-label">Numéro de téléphone</label>
+            <input type="tel" class="form-control">
+        </div>
+
+        <!-- EMAIL -->
+        <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control">
+        </div>
+
+        <!-- ADRESSE -->
+        <div class="col-12">
+            <label class="form-label">Adresse de la prestation</label>
+            <textarea class="form-control" rows="3"></textarea>
+        </div>
+
+        <!-- DATE -->
+        <div class="col-md-6">
+            <label class="form-label">Date de la prestation</label>
+            <input type="date" class="form-control">
+        </div>
+
+        <!-- HEURE -->
+        <div class="col-md-6">
+            <label class="form-label">Heure de la prestation</label>
+            <input type="time" class="form-control">
+        </div>
+
+        <!-- AUTRES INFOS -->
+        <div class="col-12">
+            <label class="form-label">Autres informations ou demandes</label>
+            <textarea class="form-control" rows="4"></textarea>
+        </div>
+
+        </div>
+
+        <!-- BOUTON -->
+        <div class="text-center mt-5">
+        <button type="submit" class="btn btn-primary px-5 py-3 fw-bold">
+            Continuer
+        </button>
+        </div>
+
+    </form>
+
+</section>
