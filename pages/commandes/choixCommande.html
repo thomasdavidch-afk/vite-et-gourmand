@@ -4,69 +4,112 @@
     <h2 class="mb-4">Etapes 2 : Le choix du Menu</h2>
 
     <!-- INFOS -->
-    <p class="mb-1">
-        Merci de remplir les champs suivant
-    </p>
-
+    <p class="mb-1">Merci de remplir les champs suivant</p>
     <p class="text-danger small mb-4">
         <strong>Attention :</strong> Minimum de personnes par Menu, si plus de 5 personnes
         que le nombre minimum il y a une remise de 10%
     </p>
 
-    <form action="/confirmationCommande" methode="GET">
-
+    <form id="formChoixMenu" action="/confirmationCommande" method="GET">
         <div class="row g-4">
 
-        <!-- SELECT MENU -->
-        <div class="col-12">
-            <label class="form-label">Choisissez votre Menu</label>
-            <select class="form-select">
-            <option selected disabled>-- Sélectionnez un menu --</option>
-            <option>Menu Joyeux Noël Indien</option>
-            <option>Menu Le Végé</option>
-            <option>Menu Séminaire</option>
-            <option>Menu Le Grand Format</option>
-            <option>Menu Vive les Mariés</option>
-            </select>
+            <!-- SELECT MENU -->
+            <div class="col-12">
+                <label class="form-label fw-bold">Choisissez votre Menu</label>
+                <select id="selectMenu" class="form-select">
+                    <option selected disabled value="">-- Sélectionnez un menu --</option>
+                    <option value="joyeuxNoel">Menu Joyeux Noël Indien</option>
+                    <option value="vege">Menu Le Végétarien</option>
+                    <option value="seminaire">Menu Séminaire</option>
+                    <option value="grandFormat">Menu Le Grand Format</option>
+                    <option value="maries">Menu Vive les Mariés</option>
+                </select>
+            </div>
+
+            <!-- SECTION CHOIX (cachée au départ) -->
+            <div id="sectionChoix" class="col-12 d-none">
+                <div class="row g-4">
+
+                    <!-- ENTRÉE -->
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Choisissez votre Entrée</label>
+                        <select id="selectEntree" class="form-select">
+                            <option selected disabled value="">-- Sélectionnez une entrée --</option>
+                        </select>
+                    </div>
+
+                    <!-- PLAT -->
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Choisissez votre Plat</label>
+                        <select id="selectPlat" class="form-select">
+                            <option selected disabled value="">-- Sélectionnez un plat --</option>
+                        </select>
+                    </div>
+
+                    <!-- DESSERT -->
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Choisissez votre Dessert</label>
+                        <select id="selectDessert" class="form-select">
+                            <option selected disabled value="">-- Sélectionnez un dessert --</option>
+                        </select>
+                    </div>
+
+                    <!-- BOISSONS -->
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Choisissez vos Boissons <span class="text-muted small">(3 maximum)</span></label>
+                        <div id="boissonsContainer" class="row g-2">
+                            <!-- Générées en JS -->
+                        </div>
+                        <div id="msgBoissons" class="text-danger small mt-1 d-none">Vous pouvez choisir 3 boissons maximum.</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- NOMBRE PERSONNES -->
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Nombre de personnes</label>
+                <input type="number" id="nbPersonnes" class="form-control" min="1" placeholder="Entrez un nombre">
+                <div id="erreurPersonnes" class="text-danger small d-none"></div>
+            </div>
+
+            <!-- REMISE -->
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Remise</label>
+                <input type="text" id="remise" class="form-control bg-light" placeholder="Calcul automatique" disabled>
+            </div>
+
+            <!-- PRIX BASE -->
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Prix de Base</label>
+                <input type="text" id="prixBase" class="form-control bg-light" disabled>
+            </div>
+
+            <!-- MONTANT REMISE -->
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Montant de la remise</label>
+                <input type="text" id="montantRemise" class="form-control bg-light" disabled>
+            </div>
+
+            <!-- PRIX TOTAL -->
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Prix Total</label>
+                <input type="text" id="prixTotal" class="form-control bg-light fw-bold" disabled>
+            </div>
+
         </div>
 
-        <!-- NOMBRE PERSONNES -->
-        <div class="col-md-6">
-            <label class="form-label">Nombre de personnes</label>
-            <input type="number" class="form-control" min="30">
-        </div>
-
-        <!-- REMISE -->
-        <div class="col-md-6">
-            <label class="form-label">Remise</label>
-            <input type="text" class="form-control bg-light" placeholder="Calcul automatique" disabled>
-        </div>
-
-        <!-- PRIX BASE -->
-        <div class="col-md-4">
-            <label class="form-label">Prix de Base</label>
-            <input type="text" class="form-control bg-light" disabled>
-        </div>
-
-        <!-- MONTANT REMISE -->
-        <div class="col-md-4">
-            <label class="form-label">Montant de la remise</label>
-            <input type="text" class="form-control bg-light" disabled>
-        </div>
-
-        <!-- PRIX TOTAL -->
-        <div class="col-md-4">
-            <label class="form-label">Prix Total</label>
-            <input type="text" class="form-control bg-light fw-bold" disabled>
-        </div>
-
+        <!-- MESSAGE INFO PAIEMENT -->
+        <div class="alert alert-info mt-4">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            Suite à votre validation, notre équipe vous contactera pour le paiement de la commande.
         </div>
 
         <!-- BOUTON -->
         <div class="text-center mt-5">
-        <button type="submit" class="btn btn-primary px-5 py-3 fw-bold fs-4 rounded">
-            Je valide ma commande
-        </button>
+            <button type="submit" class="btn btn-primary px-5 py-3 fw-bold fs-4 rounded">
+                Je valide ma commande
+            </button>
         </div>
 
     </form>
