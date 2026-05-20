@@ -13,6 +13,9 @@ export const allRoutes = [
     new Route("/infoCommande", "Etape 1 : Commande", "/pages/commandes/infoCommande.html", []),
     new Route("/choixCommande", "Etape 2 : Commande", "/pages/commandes/choixCommande.html", []),
     new Route("/confirmationCommande", "Etape 3 : Confirmation Commande", "/pages/commandes/confirmationCommande.html", []),
+    new Route("/contact", "Contactez-nous", "/pages/contact.html", []),
+    new Route("/accountAdmin", "Mon Compte Administrateur", "/pages/auth/accountAdmin.html", ["admin"]),
+    new Route("/accountEmploye", "Mon Compte Employe", "/pages/auth/accountEmploye.html", ["employe"]),
 ];
 
 //Le titre s'affiche comme ceci : Route.titre - websitename
