@@ -98,7 +98,7 @@ function genererBoissons(boissons) {
         boissonsContainer.appendChild(col);
     });
 
-    boissonsContainer.addEventListener("change", () => {
+    boissonsContainer.addEventListener("change", (event) => {
         const checked = boissonsContainer.querySelectorAll(".boisson-check:checked");
         if (checked.length > 3) {
             event.target.checked = false;

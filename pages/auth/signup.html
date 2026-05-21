@@ -7,13 +7,6 @@
 <div class="container py-5">
     <form>
         <div class="mb-3">
-            <label for="NameInput" class="form-label">Nom</label>
-            <input type="text" class="form-control" id="NameInput" placeholder="Votre nom">
-            <div class="invalid-feedback">
-                Le champ est requis.
-            </div>
-        </div>
-        <div class="mb-3">
             <label for="SurnameInput" class="form-label">Prénom</label>
             <input type="text" class="form-control" id="SurnameInput" placeholder="Votre prénom">
             <div class="invalid-feedback">
@@ -35,10 +28,10 @@
             </div>
         </div>
         <div class="mb-3">
-            <label for="ZipInput" class="form-label">Code Postal</label>
-            <input type="text" class="form-control" id="ZipInput">
+            <label for="CountryInput" class="form-label">Pays</label>
+            <input type="text" class="form-control" id="CountryInput" placeholder="Votre pays">
             <div class="invalid-feedback">
-                Le Code Postal n'est pas au bon format.
+                Le champ est requis.
             </div>
         </div>
         <div class="mb-3">
@@ -71,12 +64,11 @@
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-primary" id="btn-validation-inscription" disabled>S'inscire</button>
+            <button type="submit" class="btn btn-primary" id="btn-validation-inscription" disabled>S'inscrire</button>
         </div>
 
         <div class="text-center pt-3">
             <a href="/signin">Vous avez déjà un compte ? Connectez-vous ici !</a>
         </div>
-</form>
+    </form>
 </div>
-
