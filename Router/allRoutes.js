@@ -12,7 +12,7 @@ export const allRoutes = [
     new Route("/MenuVegetarien", "Menu Végétarien", "pages/MenuVegetarien.html", "", []),
     new Route("/signin", "Connexion", "pages/auth/signin.html", "js/auth/signin.js", ["disconnected"]),
     new Route("/signup", "Inscription", "pages/auth/signup.html", "js/auth/signup.js", ["disconnected"]),
-    new Route("/account", "Mon Compte", "pages/auth/account.html", "js/auth/account.js", ["client", "admin", "employe"]),
+    new Route("/account", "Mon Compte", "pages/auth/account.html", "js/auth/accountClient.js", ["client", "admin", "employe"]),
     new Route("/editPassword", "Changement mot de passe", "pages/auth/editPassword.html", "", ["client", "admin", "employe"]),
     new Route("/allCommandes", "Vos commandes", "pages/commandes/allCommandes.html", "", ["client"]),
     new Route("/infoCommande", "Etape 1 : Commande", "pages/commandes/infoCommande.html", "js/order/infoCommande.js", []),
