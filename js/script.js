@@ -1,11 +1,19 @@
 const tokenCookieName = "accesstoken";
 const RoleCookieName = "role";
 const signoutBtn = document.getElementById("signout-btn");
-
-signoutBtn.addEventListener("click", signout)
+if (signoutBtn) {
+    signoutBtn.addEventListener("click", signout);
+}
 
 function getRole() {
-    return getCookie(RoleCookieName);
+    let role = getCookie(RoleCookieName);
+    if (!role) return null;
+    
+    // Nettoyage au cas où (ex: "ROLE_ADMIN" -> "admin")
+    role = role.replace("ROLE_", "").toLowerCase();
+    if (role === "employee") role = "employe";
+    
+    return role;
 }
 
 function signout(){
