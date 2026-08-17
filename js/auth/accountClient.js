@@ -2,27 +2,36 @@
 initAccountPage();
 
 async function initAccountPage() {
+    // 0. Redirection automatique si c'est un Admin ou un Employé
+    const role = getRole(); // Utilise la fonction globale de script.js
+
+    if (role === "admin") {
+        window.location.replace("/accountAdmin");
+        return;
+    } else if (role === "employe") {
+        window.location.replace("/accountEmploye");
+        return;
+    }
+
     // 1. Récupération des éléments du formulaire
     const nameInput = document.getElementById("NameInput");
     const surnameInput = document.getElementById("SurnameInput");
     const adresseInput = document.getElementById("AdresseInput");
     const villeInput = document.getElementById("VilleInput");
-    const paysInput = document.getElementById("PaysInput");
+    const zipInput = document.getElementById("ZipInput");
     const phoneInput = document.getElementById("PhoneInput");
 
     const accountForm = document.querySelector("form");
     const btnDeleteAccount = document.querySelector(".btn-danger");
 
-    // 2. Récupérer le token dans le localStorage (ou sessionStorage selon votre config)
-    const token = getToken(); // Ou getCookie("accesstoken"); selon vos fonctions dans script.js
+    // 2. Récupérer le token dans les cookies
+    const token = getToken();
 
     if (!token) {
         console.warn("⚠️ Aucun token trouvé dans les cookies, redirection vers /signin");
-        window.location.replace("/signin"); // Redirige vers /signin (conforme à votre allRoutes.js)
+        window.location.replace("/signin"); 
         return;
     }
-
-    loadUserProfile();
 
     // 3. Charger les données de l'utilisateur connecté
     async function loadUserProfile() {
@@ -31,7 +40,7 @@ async function initAccountPage() {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                    "X-AUTH-TOKEN": token // <-- UTILISATION DE X-AUTH-TOKEN
+                    "X-AUTH-TOKEN": token
                 }
             });
 
@@ -52,7 +61,7 @@ async function initAccountPage() {
             if (surnameInput) surnameInput.value = user.prenom || "";
             if (adresseInput) adresseInput.value = user.adressePostale || "";
             if (villeInput) villeInput.value = user.ville || "";
-            if (paysInput) paysInput.value = user.pays || "";
+            if (zipInput) zipInput.value = user.codePostal || "";
             if (phoneInput) phoneInput.value = user.telephone || "";
 
         } catch (error) {
@@ -72,16 +81,16 @@ async function initAccountPage() {
                 prenom: surnameInput ? surnameInput.value.trim() : null,
                 adressePostale: adresseInput ? adresseInput.value.trim() : null,
                 ville: villeInput ? villeInput.value.trim() : null,
-                pays: paysInput ? paysInput.value.trim() : null,
+                codePostal: zipInput ? zipInput.value.trim() : null,
                 telephone: phoneInput ? phoneInput.value.trim() : null
             };
 
             try {
-                const response = await fetch("http://localhost:8000/api/account/me", {
+                const response = await fetch("http://localhost:8000/api/account/edit", {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
-                        "X-AUTH-TOKEN": token // <-- UTILISATION DE X-AUTH-TOKEN
+                        "X-AUTH-TOKEN": token 
                     },
                     body: JSON.stringify(updatedUser)
                 });
@@ -103,7 +112,7 @@ async function initAccountPage() {
         btnDeleteAccount.addEventListener("click", async () => {
             if (confirm("Êtes-vous sûr de vouloir supprimer votre compte ?")) {
                 try {
-                    const response = await fetch("http://localhost:8000/api/account/me", {
+                    const response = await fetch("http://localhost:8000/api/account/delete", {
                         method: "DELETE",
                         headers: {
                             "X-AUTH-TOKEN": token
@@ -111,7 +120,8 @@ async function initAccountPage() {
                     });
 
                     if (response.ok) {
-                        localStorage.removeItem("token");
+                        eraseCookie(tokenCookieName);
+                        eraseCookie(RoleCookieName);
                         alert("Votre compte a été supprimé.");
                         window.location.replace("/");
                     }

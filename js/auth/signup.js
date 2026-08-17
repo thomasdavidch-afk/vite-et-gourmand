@@ -1,8 +1,9 @@
 // Implémenter le Javascript
 const inputSurname = document.getElementById("SurnameInput");
+const inputName = document.getElementById("NameInput");
 const inputAdresse = document.getElementById("AdresseInput");
 const inputCity = document.getElementById("CityInput");
-const inputCountry = document.getElementById("CountryInput");
+const inputZip = document.getElementById("ZipInput");
 const inputEmail = document.getElementById("EmailInput");
 const inputPhone = document.getElementById("PhoneInput");
 const inputPassword = document.getElementById("PasswordInput");
@@ -11,9 +12,10 @@ const btnValidation = document.getElementById("btn-validation-inscription");
 const form = document.querySelector("form");
 
 inputSurname.addEventListener("keyup", validateForm);
+inputName.addEventListener("keyup", validateForm);
 inputAdresse.addEventListener("keyup", validateForm);
 inputCity.addEventListener("keyup", validateForm);
-inputCountry.addEventListener("keyup", validateForm);
+inputZip.addEventListener("keyup", validateForm);
 inputEmail.addEventListener("keyup", validateForm);
 inputPhone.addEventListener("keyup", validateForm);
 inputPassword.addEventListener("keyup", validateForm);
@@ -26,9 +28,10 @@ form.addEventListener("submit", async (e) => {
     // 🔑 ENVOIE DU JSON, PAS DU FormData !
     const data = {
         prenom: inputSurname.value.trim(),
+        nom: inputName.value.trim(),
         adressePostale: inputAdresse.value.trim(),
         ville: inputCity.value.trim(),
-        pays: inputCountry.value.trim(),
+        codePostal: inputZip.value.trim(),
         email: inputEmail.value.trim(),
         telephone: inputPhone.value.trim(),
         password: inputPassword.value.trim()
@@ -37,7 +40,7 @@ form.addEventListener("submit", async (e) => {
     console.log("📤 Données envoyées :", data);
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/api/utilisateurs", {
+        const response = await fetch("http://127.0.0.1:8000/api/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/ld+json"  // ← IMPORTANT !
@@ -69,14 +72,15 @@ form.addEventListener("submit", async (e) => {
 
 function validateForm() {
     const surnameOk = validateRequired(inputSurname);
+    const nameOk = validateRequired(inputName);
     const adresseOk = validateRequired(inputAdresse);
     const cityOk = validateRequired(inputCity);
-    const countryOk = validateRequired(inputCountry);
+    const zipOk = validateRequired(inputZip);
     const emailOk = validateEmail(inputEmail);
     const passwordOk = validatePasswords(inputPassword, inputValidatePassword);
     const phoneOk = validatePhone(inputPhone);
 
-    btnValidation.disabled = !(surnameOk && adresseOk && cityOk && countryOk && emailOk && passwordOk && phoneOk);
+    btnValidation.disabled = !(surnameOk && nameOk && adresseOk && cityOk && zipOk && emailOk && passwordOk && phoneOk);
 }
 
 function validateRequired(input) {
