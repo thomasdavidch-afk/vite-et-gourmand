@@ -1,5 +1,7 @@
 const tokenCookieName = "accesstoken";
 const RoleCookieName = "role";
+const UserIdCookieName = "userId"; // 👈 Ajout du nom du cookie pour l'ID utilisateur
+
 const signoutBtn = document.getElementById("signout-btn");
 if (signoutBtn) {
     signoutBtn.addEventListener("click", signout);
@@ -8,17 +10,23 @@ if (signoutBtn) {
 function getRole() {
     let role = getCookie(RoleCookieName);
     if (!role) return null;
-    
+
     // Nettoyage au cas où (ex: "ROLE_ADMIN" -> "admin")
     role = role.replace("ROLE_", "").toLowerCase();
     if (role === "employee") role = "employe";
-    
+
     return role;
+}
+
+// 👈 Nouvelle fonction pour récupérer l'ID de l'utilisateur connecté
+function getUserId() {
+    return getCookie(UserIdCookieName);
 }
 
 function signout(){
     eraseCookie(tokenCookieName);
     eraseCookie(RoleCookieName);
+    eraseCookie(UserIdCookieName); // 👈 Effacement du cookie ID lors de la déconnexion
     window.location.reload();
 }
 
@@ -28,7 +36,6 @@ function setToken(token) {
 
 function getToken() {
     return getCookie(tokenCookieName);
-
 }
 
 function setCookie(name,value,days) {

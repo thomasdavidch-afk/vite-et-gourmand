@@ -37,12 +37,18 @@ async function checkCredentials() {
             // ✅ Connexion réussie
             alert("✅ Vous êtes connecté !");
 
-            // 🎫 Utiliser ta fonction setToken() existante
+            // 🎫 Stocker le token
             const token = data.token || "token_" + data.id;
-            setToken(token); // ← Utilise ta fonction globale
+            setToken(token);
 
-            // 🍪 Stocker le rôle (utilise ta fonction globale)
-            setCookie(RoleCookieName, data.role || "client", 7); // ← Utilise ta fonction globale
+            // 🍪 Stocker le rôle
+            setCookie(RoleCookieName, data.role || "client", 7);
+
+            // 🆔 Stocker l'ID de l'utilisateur (NOUVEAU)
+            const idToSave = data.id || data.utilisateur_id || (data.user && data.user.id);
+            if (idToSave) {
+                setCookie(UserIdCookieName, idToSave, 7);
+            }
 
             // 🔄 Rediriger
             window.location.replace('/');

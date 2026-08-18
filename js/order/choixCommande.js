@@ -1,278 +1,349 @@
-// ============================================================
-// DONNÉES DES MENUS
-// ============================================================
-const menus = {
-    joyeuxNoel: {
-        nom: "Menu Joyeux Noël Indien",
-        prix: 27,
-        minPersonnes: 20,
-        entrees: ["Samoussas de Noël", "Tandoori Chicken", "Chaat de Betterave et Grenade"],
-        plats: ["Rogan Josh de Noël", "Curry de Légumes d'Hiver", "Biryani de Noël aux Fruits Secs"],
-        desserts: ["Gajar ka Halwa", "Kheer aux Fruits Secs", "Gulab Jamun Festif"],
-        boissons: ["Lassi salé (yaourt, menthe, cumin)", "Mule de Noël (vodka, gingembre...)", "Vin Blanc Sec", "Vin Rouge Léger", "Eau Plate"]
-    },
-    vege: {
-        nom: "Menu Le Végétarien",
-        prix: 32,
-        minPersonnes: 20,
-        entrees: ["Falafels Maison", "Bruschettas Tomate Basilic", "Salade de Lentilles et Légumes"],
-        plats: ["Curry de Pois Chiches", "Gratin de Légumes", "Pâtes aux Légumes Grillés"],
-        desserts: ["Panna Cotta Vanille", "Compote Maison", "Cake aux Fruits Secs"],
-        boissons: ["Smoothie Mangue", "Jus Détox Vert", "Infusion Verveine", "Lait d'Amande", "Eau Plate"]
-    },
-    seminaire: {
-        nom: "Menu Séminaire",
-        prix: 23,
-        minPersonnes: 50,
-        entrees: ["Mini Wraps Poulet Curry", "Verrines de Saumon et Avocat", "Salade de Quinoa Méditerranéenne"],
-        plats: ["Poulet Grillé aux Herbes", "Saumon Sauce Citron", "Risotto aux Champignons"],
-        desserts: ["Tiramisu Classique", "Salade de Fruits Frais", "Moelleux au Chocolat"],
-        boissons: ["Eau Infusée Citron Menthe", "Jus de Fruits Frais", "Café Filtre", "Thé Vert", "Eau Plate"]
-    },
-    grandFormat: {
-        nom: "Menu Le Grand Format",
-        prix: 23,
-        minPersonnes: 50,
-        entrees: ["Assortiment de Beignets Salés", "Plateau de Charcuterie Artisanale", "Salade César XXL"],
-        plats: ["Paëlla Géante", "Couscous Royal", "Lasagnes Maison"],
-        desserts: ["Buffet de Desserts Variés", "Brownies Gourmands", "Cheesecake XXL"],
-        boissons: ["Punch Maison", "Sangria Rouge", "Bière Artisanale", "Cola", "Eau Plate"]
-    },
-    maries: {
-        nom: "Menu Vive les Mariés",
-        prix: 28,
-        minPersonnes: 50,
-        entrees: ["Carpaccio de Saint-Jacques", "Foie Gras Maison", "Salade Gourmande aux Magrets"],
-        plats: ["Filet de Bœuf Rossini", "Suprême de Volaille aux Morilles", "Dos de Cabillaud Beurre Blanc"],
-        desserts: ["Pièce Montée", "Macarons Assortis", "Fraisier Élégant"],
-        boissons: ["Champagne Brut", "Cocktail Spritz", "Vin Blanc Prestige", "Vin Rouge Réserve", "Eau Plate"]
+// Exécution
+initChoixCommandePage();
+
+async function initChoixCommandePage() {
+
+    // ============================================================
+    // 1. SÉCURISATION & VALIDATION ÉTAPE 1
+    // ============================================================
+    const rawDataStep1 = sessionStorage.getItem("infoCommande");
+    let infoCommande = null;
+
+    try {
+        infoCommande = rawDataStep1 ? JSON.parse(rawDataStep1) : null;
+    } catch (e) {
+        infoCommande = null;
     }
-};
 
-// ============================================================
-// RÉFÉRENCES DOM
-// ============================================================
-const selectMenu         = document.getElementById("selectMenu");
-const sectionChoix       = document.getElementById("sectionChoix");
-const selectEntree       = document.getElementById("selectEntree");
-const selectPlat         = document.getElementById("selectPlat");
-const selectDessert      = document.getElementById("selectDessert");
-const boissonsContainer  = document.getElementById("boissonsContainer");
-const msgBoissons        = document.getElementById("msgBoissons");
-const nbPersonnesInput   = document.getElementById("nbPersonnes");
-const remiseInput        = document.getElementById("remise");
-const prixBaseInput      = document.getElementById("prixBase");
-const montantRemiseInput = document.getElementById("montantRemise");
-const prixTotalInput     = document.getElementById("prixTotal");
-const formChoixMenu      = document.getElementById("formChoixMenu");
-// ⬇️ NOUVEAU : message d'erreur sous le champ nombre de personnes
-const erreurPersonnes    = document.getElementById("erreurPersonnes");
-
-// ============================================================
-// FONCTION : Remplir un select avec des options
-// ============================================================
-function remplirSelect(selectElement, options) {
-    selectElement.innerHTML = `<option selected disabled value="">-- Sélectionnez --</option>`;
-    options.forEach(opt => {
-        const option = document.createElement("option");
-        option.value = opt;
-        option.textContent = opt;
-        selectElement.appendChild(option);
-    });
-}
-
-// ============================================================
-// FONCTION : Générer les checkboxes des boissons
-// ============================================================
-function genererBoissons(boissons) {
-    boissonsContainer.innerHTML = "";
-    boissons.forEach((boisson, index) => {
-        const col = document.createElement("div");
-        col.className = "col-md-4";
-        col.innerHTML = `
-            <div class="form-check">
-                <input class="form-check-input boisson-check" type="checkbox" value="${boisson}" id="boisson${index}">
-                <label class="form-check-label" for="boisson${index}">${boisson}</label>
-            </div>
-        `;
-        boissonsContainer.appendChild(col);
-    });
-
-    boissonsContainer.addEventListener("change", (event) => {
-        const checked = boissonsContainer.querySelectorAll(".boisson-check:checked");
-        if (checked.length > 3) {
-            event.target.checked = false;
-            msgBoissons.classList.remove("d-none");
+    if (!infoCommande || !infoCommande.email) {
+        console.warn("Étape 1 non complétée, redirection...");
+        if (window.router && typeof window.router.navigate === "function") {
+            window.router.navigate("/infoCommande");
         } else {
-            msgBoissons.classList.add("d-none");
+            window.location.href = "/infoCommande";
         }
-    });
-}
-
-// ============================================================
-// FONCTION : Calculer les prix
-// ============================================================
-function calculerPrix() {
-    const menuKey = selectMenu.value;
-    const nbPersonnes = parseInt(nbPersonnesInput.value);
-    const erreurPersonnes = document.getElementById("erreurPersonnes");
-
-    if (!menuKey || isNaN(nbPersonnes) || nbPersonnes <= 0) {
-        prixBaseInput.value      = "";
-        montantRemiseInput.value = "";
-        prixTotalInput.value     = "";
-        remiseInput.value        = "";
         return;
     }
 
-    if (nbPersonnes > 300) {
-    nbPersonnesInput.classList.add("is-invalid");
-    if (erreurPersonnes) {
-        erreurPersonnes.textContent = "Le nombre maximum de personnes est de 300.";
-        erreurPersonnes.classList.remove("d-none");
+    // ============================================================
+    // 2. ÉLÉMENTS DOM
+    // ============================================================
+    const selectMenu         = document.getElementById("selectMenu");
+    const sectionChoix       = document.getElementById("sectionChoix");
+    const containerContenu   = document.getElementById("containerContenuMenu");
+    const nbPersonnesInput   = document.getElementById("nbPersonnes");
+    const erreurPersonnes    = document.getElementById("erreurPersonnes");
+    const remiseInput        = document.getElementById("remise");
+    const prixBaseInput      = document.getElementById("prixBase");
+    const montantRemiseInput = document.getElementById("montantRemise");
+    const prixTotalInput     = document.getElementById("prixTotal");
+    const formChoixMenu      = document.getElementById("formChoixMenu");
+
+    let menusMap = {};
+    let cataloguePlats = {}; // Dictionnaire { idPlat: "Nom/Titre du Plat" }
+
+    // Fonction de récupération du cookie (si besoin de récupérer le token)
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
     }
-    prixBaseInput.value      = "";
-    montantRemiseInput.value = "";
-    prixTotalInput.value     = "";
-    remiseInput.value        = "";
-    return;
-}
 
-    const menu = menus[menuKey];
+    // ============================================================
+    // 3. CHARGEMENT PRÉALABLE DU CATALOGUE DE PLATS
+    // ============================================================
+    async function chargerCataloguePlats() {
+        try {
+            const res = await fetch("http://127.0.0.1:8000/api/plats", {
+                headers: { 'Accept': 'application/json' }
+            });
 
-    if (nbPersonnes < menu.minPersonnes) {
-        nbPersonnesInput.classList.add("is-invalid");
-        if (erreurPersonnes) {
-            erreurPersonnes.textContent = `Minimum requis pour ce menu : ${menu.minPersonnes} personnes.`;
+            if (res.ok) {
+                const data = await res.json();
+                const listePlats = Array.isArray(data) ? data : (data["hydra:member"] || data.plats || []);
+
+                listePlats.forEach(p => {
+                    const id = p.platId || p.id || p._id;
+                    const nomOuTitre = p.titre || p["titre-plat"] || p.titrePlat || p.nom || p.libelle;
+                    if (id) {
+                        cataloguePlats[id] = nomOuTitre || `Plat #${id}`;
+                    }
+                });
+                console.log("Catalogue de plats chargé :", cataloguePlats);
+            }
+        } catch (e) {
+            console.warn("Impossible de charger le catalogue des plats", e);
+        }
+    }
+
+    // ============================================================
+    // 4. CHARGEMENT DES MENUS DEPUIS L'API
+    // ============================================================
+    try {
+        await chargerCataloguePlats();
+
+        const API_URL = "http://127.0.0.1:8000/api/menus"; 
+
+        const res = await fetch(API_URL, {
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!res.ok) {
+            throw new Error(`Erreur HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        const listeMenus = Array.isArray(data) ? data : (data["hydra:member"] || data.menus || []);
+
+        selectMenu.innerHTML = '<option selected disabled value="">-- Sélectionnez un menu --</option>';
+
+        listeMenus.forEach(menu => {
+            const id = menu.menuId || menu.id || menu._id;
+            const titre = menu.titre || menu.nom || "Menu";
+            const prix = parseFloat(menu.prixParPersonne || menu.prix || 0);
+
+            menusMap[id] = menu;
+
+            const option = document.createElement("option");
+            option.value = id;
+            option.textContent = `${titre} (${prix.toFixed(2)}€ / pers.)`;
+            selectMenu.appendChild(option);
+        });
+
+        const savedMenuId = sessionStorage.getItem("selectedMenuId");
+        if (savedMenuId && menusMap[savedMenuId]) {
+            selectMenu.value = savedMenuId;
+            selectMenu.dispatchEvent(new Event('change'));
+        }
+
+    } catch (err) {
+        console.error("Erreur menus :", err);
+        selectMenu.innerHTML = '<option selected disabled value="">Impossible de charger les menus</option>';
+    }
+
+    // ============================================================
+    // 5. CHANGEMENT DE MENU (AFFICHE LE CONTENU)
+    // ============================================================
+    selectMenu.addEventListener("change", function() {
+        const menuId = this.value;
+        const menu = menusMap[menuId];
+
+        if (!menu) return;
+
+        sectionChoix.classList.remove("d-none");
+
+        const minPersonnes = menu.nombrePersonneMinimum || menu.minPersonnes || 1;
+        nbPersonnesInput.value = minPersonnes;
+        nbPersonnesInput.min = minPersonnes;
+
+        let htmlContenu = `<h5 class="fw-bold text-primary mb-2">${menu.titre || menu.nom}</h5>`;
+        if (menu.description) {
+            htmlContenu += `<p class="text-muted small mb-3">${menu.description}</p>`;
+        }
+
+        const listePlats = menu.plats || menu.menuPlats || [];
+
+        if (Array.isArray(listePlats) && listePlats.length > 0) {
+            htmlContenu += `<h6 class="fw-bold mb-2">Composition du menu :</h6><ul class="mb-0 ps-3">`;
+
+            listePlats.forEach(item => {
+                const objPlat = item.plat || item;
+                const idPlat = objPlat.platId || objPlat.id;
+
+                const titreDirect = objPlat.titre || objPlat["titre-plat"] || objPlat.titrePlat || objPlat.nom;
+                const nomFinal = titreDirect || cataloguePlats[idPlat] || `Plat #${idPlat}`;
+
+                htmlContenu += `<li>${nomFinal}</li>`;
+            });
+
+            htmlContenu += `</ul>`;
+        } else {
+            htmlContenu += `<p class="mb-0 text-muted fs-6"><em>Menu tout-compris.</em></p>`;
+        }
+
+        containerContenu.innerHTML = htmlContenu;
+
+        calculerPrix();
+    });
+
+    // ============================================================
+    // 6. CALCUL DU PRIX ET DES REMISES
+    // ============================================================
+    function calculerPrix() {
+        const menuId = selectMenu.value;
+        const menu = menusMap[menuId];
+        if (!menu) return;
+
+        const prixParPersonne = parseFloat(menu.prixParPersonne || menu.prix || 0);
+        const minPersonnes = parseInt(menu.nombrePersonneMinimum || menu.minPersonnes || 1);
+        const nbPersonnes = parseInt(nbPersonnesInput.value) || 0;
+
+        erreurPersonnes.classList.add("d-none");
+
+        if (nbPersonnes < minPersonnes) {
+            erreurPersonnes.textContent = `Le nombre minimum de personnes pour ce menu est de ${minPersonnes}.`;
             erreurPersonnes.classList.remove("d-none");
         }
-        prixBaseInput.value      = "";
-        montantRemiseInput.value = "";
-        prixTotalInput.value     = "";
-        remiseInput.value        = "";
-        return;
+
+        const prixBase = prixParPersonne * nbPersonnes;
+        let tauxRemise = 0;
+
+        if (nbPersonnes >= minPersonnes + 5) {
+            tauxRemise = 0.10; // 10%
+        }
+
+        const montantRemise = prixBase * tauxRemise;
+        const prixTotal = prixBase - montantRemise;
+
+        remiseInput.value = (tauxRemise * 100) + " %";
+        prixBaseInput.value = prixBase.toFixed(2) + " €";
+        montantRemiseInput.value = montantRemise.toFixed(2) + " €";
+        prixTotalInput.value = prixTotal.toFixed(2) + " €";
     }
 
-    nbPersonnesInput.classList.remove("is-invalid");
-    if (erreurPersonnes) erreurPersonnes.classList.add("d-none");
+    nbPersonnesInput.addEventListener("input", calculerPrix);
 
-    const prixBase = menu.prix * nbPersonnes;
-    const seuilRemise = menu.minPersonnes + 4;
-    let tauxRemise = 0;
-    let montantRemise = 0;
-    let prixTotal = prixBase;
+    // ============================================================
+    // 7. SOUMISSION DU FORMULAIRE ET ENREGISTREMENT POST
+    // ============================================================
+    formChoixMenu.addEventListener("submit", async function(e) {
+        e.preventDefault();
 
-    if (nbPersonnes > seuilRemise) {
-        tauxRemise = 10;
-        montantRemise = prixBase * 0.10;
-        prixTotal = prixBase - montantRemise;
-    }
+        const btnSubmit = formChoixMenu.querySelector('button[type="submit"]');
 
-    prixBaseInput.value      = prixBase.toFixed(2) + " €";
-    remiseInput.value        = tauxRemise > 0 ? tauxRemise + "%" : "Aucune remise";
-    montantRemiseInput.value = montantRemise > 0 ? "-" + montantRemise.toFixed(2) + " €" : "0.00 €";
-    prixTotalInput.value     = prixTotal.toFixed(2) + " €";
+        const menuId = selectMenu.value;
+        const menu = menusMap[menuId];
+
+        if (!menuId || !menu) {
+            alert("Veuillez sélectionner un menu.");
+            return;
+        }
+
+        const minPersonnes = parseInt(menu.nombrePersonneMinimum || menu.minPersonnes || 1);
+        const nbPersonnes = parseInt(nbPersonnesInput.value);
+
+        if (isNaN(nbPersonnes) || nbPersonnes < minPersonnes) {
+            alert(`Le minimum de personnes requis pour ce menu est de ${minPersonnes}.`);
+            return;
+        }
+
+        // Sauvegarde locale dans le sessionStorage
+        const choixCommande = {
+            menuId: menuId,
+            menuNom: menu.titre || menu.nom,
+            prixParPersonne: parseFloat(menu.prixParPersonne || menu.prix || 0),
+            nbPersonnes: nbPersonnes,
+            prixBase: prixBaseInput.value,
+            remise: remiseInput.value,
+            montantRemise: montantRemiseInput.value,
+            prixTotal: prixTotalInput.value
+        };
+
+        sessionStorage.setItem("choixCommande", JSON.stringify(choixCommande));
+
+        // Formatage du prix total sous forme de nombre
+        const prixTotalNum = parseFloat(prixTotalInput.value.replace(/[^0-9.,]/g, '').replace(',', '.'));
+
+        // Génération du numéro de commande unique
+        const numCommande = "CMD-" + Date.now().toString().slice(-8);
+
+        // Récupération de l'email et des infos utilisateur
+        let rawUser = sessionStorage.getItem("user") || localStorage.getItem("user");
+        let userObj = null;
+        try { userObj = rawUser ? JSON.parse(rawUser) : null; } catch(e){}
+
+        const userId = infoCommande.utilisateurId 
+                    || infoCommande.userId 
+                    || infoCommande.id 
+                    || (userObj ? (userObj.id || userObj.utilisateurId || userObj.userId) : null);
+
+        const userEmail = infoCommande.email || (userObj ? userObj.email : null);
+        const tokenCookie = getCookie("accesstoken");
+
+        // Formatage de l'heure
+        let heureLivraisonBrute = infoCommande.heureLivraison || infoCommande.heure || "12:00";
+        if (heureLivraisonBrute.length === 5) {
+            heureLivraisonBrute += ":00";
+        }
+
+        const datePrestationStr = (infoCommande.datePrestation || infoCommande.dateLivraison || new Date().toISOString().slice(0, 10));
+        const heureDateTime = `${datePrestationStr.slice(0, 10)}T${heureLivraisonBrute}`;
+
+        // Payload
+        const payloadCommande = {
+            numeroCommande: numCommande,
+            dateCommande: new Date().toISOString().slice(0, 10),
+            datePrestation: datePrestationStr.slice(0, 10),
+            heureLivraison: heureDateTime,
+            heure: heureLivraisonBrute,
+            prixMenu: prixTotalNum,
+            nombrePersonne: nbPersonnes,
+            prixLivraison: parseFloat(infoCommande.fraisLivraison || 0),
+            statut: "En attente",
+            pretMateriel: false,
+            restitutionMateriel: false,
+            menuId: parseInt(menuId, 10),
+            menu: parseInt(menuId, 10),
+            email: userEmail,
+            emailUtilisateur: userEmail,
+            accessToken: tokenCookie
+        };
+
+        if (userId) {
+            payloadCommande.utilisateurId = parseInt(userId, 10);
+            payloadCommande.utilisateur = parseInt(userId, 10);
+            payloadCommande.user = parseInt(userId, 10);
+        }
+
+        console.log("Payload envoyé à la BDD :", payloadCommande);
+
+        if (btnSubmit) {
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = "Enregistrement en cours...";
+        }
+
+        const headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        };
+
+        if (tokenCookie) {
+            headers["Authorization"] = `Bearer ${tokenCookie}`;
+        }
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/commandes", {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify(payloadCommande)
+            });
+
+            if (response.ok || response.status === 201) {
+                const resData = await response.json();
+                console.log("✅ Commande créée avec succès dans la BDD :", resData);
+
+                if (window.router && typeof window.router.navigate === "function") {
+                    window.router.navigate("/confirmationCommande");
+                } else {
+                    window.location.href = "/confirmationCommande";
+                }
+            } else {
+                const errData = await response.json();
+                console.error("❌ Erreur serveur lors de la création :", errData);
+                alert("Erreur lors de la validation de la commande. Consultez la console.");
+                if (btnSubmit) {
+                    btnSubmit.disabled = false;
+                    btnSubmit.textContent = "Valider ma commande";
+                }
+            }
+        } catch (error) {
+            console.error("❌ Erreur réseau lors du POST commande :", error);
+            alert("Impossible de se connecter au serveur.");
+            if (btnSubmit) {
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = "Valider ma commande";
+            }
+        }
+    });
 }
-
-// ============================================================
-// ÉVÉNEMENT : Changement de menu
-// ============================================================
-selectMenu.addEventListener("change", () => {
-    const menuKey = selectMenu.value;
-    const menu = menus[menuKey];
-
-    // ⬇️ NOUVEAU : mettre à jour le placeholder avec le minimum du menu sélectionné
-    nbPersonnesInput.min = menu.minPersonnes;
-    nbPersonnesInput.placeholder = `Minimum ${menu.minPersonnes} personnes`;
-
-    sectionChoix.classList.remove("d-none");
-
-    remplirSelect(selectEntree, menu.entrees);
-    remplirSelect(selectPlat, menu.plats);
-    remplirSelect(selectDessert, menu.desserts);
-
-    genererBoissons(menu.boissons);
-
-    calculerPrix();
-});
-
-// ============================================================
-// ÉVÉNEMENT : Changement nombre de personnes
-// ============================================================
-nbPersonnesInput.addEventListener("input", calculerPrix);
-
-// ============================================================
-// ÉVÉNEMENT : Soumission du formulaire
-// ============================================================
-formChoixMenu.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const menuKey = selectMenu.value;
-    if (!menuKey) {
-        alert("Veuillez sélectionner un menu.");
-        return;
-    }
-
-    const entree = selectEntree.value;
-    if (!entree) {
-        alert("Veuillez sélectionner une entrée.");
-        return;
-    }
-
-    const plat = selectPlat.value;
-    if (!plat) {
-        alert("Veuillez sélectionner un plat.");
-        return;
-    }
-
-    const dessert = selectDessert.value;
-    if (!dessert) {
-        alert("Veuillez sélectionner un dessert.");
-        return;
-    }
-
-    const boissonsChoisies = [...boissonsContainer.querySelectorAll(".boisson-check:checked")]
-        .map(cb => cb.value);
-    if (boissonsChoisies.length === 0) {
-        alert("Veuillez sélectionner au moins une boisson.");
-        return;
-    }
-
-    const nbPersonnes = parseInt(nbPersonnesInput.value);
-    const menu = menus[menuKey];
-
-    if (isNaN(nbPersonnes) || nbPersonnes <= 0) {
-        alert("Veuillez entrer un nombre de personnes valide.");
-        return;
-    }
-
-    if (nbPersonnes < menu.minPersonnes) {
-        alert(`Le minimum de personnes pour ce menu est de ${menu.minPersonnes} personnes.`);
-        return;
-    }
-
-    if (nbPersonnes > 300) {
-    alert("Le nombre maximum de personnes est de 300.");
-    return;
-}
-
-
-    const choixCommande = {
-        menu: menu.nom,
-        prixParPersonne: menu.prix,
-        entree,
-        plat,
-        dessert,
-        boissons: boissonsChoisies,
-        nbPersonnes,
-        prixBase: prixBaseInput.value,
-        remise: remiseInput.value,
-        montantRemise: montantRemiseInput.value,
-        prixTotal: prixTotalInput.value
-    };
-
-    sessionStorage.setItem("choixCommande", JSON.stringify(choixCommande));
-
-    window.history.pushState({}, "", "/confirmationCommande");
-    LoadContentPage();
-});

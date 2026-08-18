@@ -59,7 +59,7 @@ async function initInfoCommandePage() {
             const headers = { 
                 "Accept": "application/json" 
             };
-            
+
             if (token) {
                 headers["Authorization"] = `Bearer ${token}`;
                 headers["X-AUTH-TOKEN"] = token;
@@ -111,10 +111,10 @@ async function initInfoCommandePage() {
             emailInput.value = savedData.email || userConnected.email || userConnected.mail || "";
         }
 
-        // Ville
-        const villeInput = document.getElementById("ville");
-        if (villeInput) {
-            villeInput.value = savedData.ville || userConnected.ville || userConnected.city || "";
+        // Adresse Postale (N° et Nom de la Rue)
+        const adresseInput = document.getElementById("adressePostale") || document.getElementById("nomRue");
+        if (adresseInput) {
+            adresseInput.value = savedData.adressePostale || savedData.nomRue || userConnected.adressePostale || userConnected.adresse || userConnected.street || "";
         }
 
         // Code Postal
@@ -123,16 +123,10 @@ async function initInfoCommandePage() {
             zipInput.value = savedData.codePostal || userConnected.codePostal || userConnected.zip || userConnected.zipCode || "";
         }
 
-        // Rue / Adresse
-        const nomRueInput = document.getElementById("nomRue");
-        if (nomRueInput) {
-            nomRueInput.value = savedData.nomRue || userConnected.adressePostale || userConnected.adresse || userConnected.street || "";
-        }
-
-        // Numéro de Rue
-        const numRueInput = document.getElementById("numeroRue");
-        if (numRueInput) {
-            numRueInput.value = savedData.numeroRue || userConnected.numeroRue || userConnected.streetNumber || "";
+        // Ville
+        const villeInput = document.getElementById("ville");
+        if (villeInput) {
+            villeInput.value = savedData.ville || userConnected.ville || userConnected.city || "";
         }
     }
 
@@ -161,8 +155,7 @@ async function initInfoCommandePage() {
         const nomComplet = document.getElementById("nomComplet")?.value.trim() || "";
         const telephone = document.getElementById("telephone")?.value.trim() || "";
         const email = document.getElementById("email")?.value.trim() || "";
-        const numeroRue = document.getElementById("numeroRue")?.value.trim() || "";
-        const nomRue = document.getElementById("nomRue")?.value.trim() || "";
+        const adressePostale = (document.getElementById("adressePostale") || document.getElementById("nomRue"))?.value.trim() || "";
         const codePostal = document.getElementById("codePostal")?.value.trim() || "";
         const ville = document.getElementById("ville")?.value.trim() || "";
         const date = document.getElementById("date")?.value || "";
@@ -178,7 +171,7 @@ async function initInfoCommandePage() {
         const telephoneValide = regexTelephone.test(telephone);
         const emailValide = regexEmail.test(email);
         const codePostalValide = regexCodePostal.test(codePostal);
-        const champsTousRemplis = nomComplet && numeroRue && nomRue && ville && heure;
+        const champsTousRemplis = nomComplet && adressePostale && codePostal && ville && date && heure;
 
         // Feedback visuel sur les inputs
         appliquerFeedback("telephone", telephoneValide, telephone === "");
@@ -192,7 +185,7 @@ async function initInfoCommandePage() {
     }
 
     // Écouter les événements "input" pour recalculer la validité en direct
-    ["nomComplet", "telephone", "email", "numeroRue", "nomRue", "codePostal", "ville", "date", "heure"].forEach(id => {
+    ["nomComplet", "telephone", "email", "adressePostale", "nomRue", "codePostal", "ville", "date", "heure"].forEach(id => {
         const input = document.getElementById(id);
         if (input) {
             input.addEventListener("input", verifierFormulaire);
@@ -206,12 +199,13 @@ async function initInfoCommandePage() {
     form.addEventListener("submit", (event) => {
         event.preventDefault();
 
+        const adressePostaleInput = document.getElementById("adressePostale") || document.getElementById("nomRue");
+
         const infoCommande = {
             nomComplet: document.getElementById("nomComplet").value.trim(),
             telephone: document.getElementById("telephone").value.trim(),
             email: document.getElementById("email").value.trim(),
-            numeroRue: document.getElementById("numeroRue").value.trim(),
-            nomRue: document.getElementById("nomRue").value.trim(),
+            adressePostale: adressePostaleInput ? adressePostaleInput.value.trim() : "",
             codePostal: document.getElementById("codePostal").value.trim(),
             ville: document.getElementById("ville").value.trim(),
             date: document.getElementById("date").value,

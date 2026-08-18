@@ -15,7 +15,7 @@ export const allRoutes = [
     new Route("/signup", "Inscription", "pages/auth/signup.html", "js/auth/signup.js", ["disconnected"]),
     new Route("/account", "Mon Compte", "pages/auth/account.html", "js/auth/accountClient.js", ["client", "admin", "employe"]),
     new Route("/editPassword", "Changement mot de passe", "pages/auth/editPassword.html", "js/auth/editPassword.js", ["client", "admin", "employe"]),
-    new Route("/allCommandes", "Vos commandes", "pages/commandes/allCommandes.html", "", ["client"]),
+    new Route("/allCommandes", "Vos commandes", "pages/commandes/allCommandes.html", "js/order/mesCommandes.js", ["client"]),
     new Route("/infoCommande", "Etape 1 : Commande", "pages/commandes/infoCommande.html", "js/order/infoCommande.js", []),
     new Route("/choixCommande", "Etape 2 : Commande", "pages/commandes/choixCommande.html", "js/order/choixCommande.js", []),
     new Route("/confirmationCommande", "Etape 3 : Confirmation Commande", "pages/commandes/confirmationCommande.html", "js/order/confirmationCommande.js", []),

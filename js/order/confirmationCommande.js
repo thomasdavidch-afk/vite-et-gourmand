@@ -1,125 +1,161 @@
-// ============================================================
-// PAGE CONFIRMATION - Affichage du récapitulatif
-// ============================================================
+// Exécution
+initConfirmationPage();
 
-const infoCommande  = JSON.parse(sessionStorage.getItem("infoCommande")  || "{}");
-const choixCommande = JSON.parse(sessionStorage.getItem("choixCommande") || "{}");
+async function initConfirmationPage() {
 
-console.log("infoCommande :", infoCommande);
-console.log("choixCommande :", choixCommande);
+    // ============================================================
+    // 1. DÉCUPÉRATION ET VALIDATION DES DONNÉES
+    // ============================================================
+    const rawStep1 = sessionStorage.getItem("infoCommande");
+    const rawStep2 = sessionStorage.getItem("choixCommande");
 
-// Vérification : si données manquantes, rediriger vers l'accueil
-if (!infoCommande.nomComplet || !choixCommande.menu) {
-    window.history.pushState({}, "", "/");
-    LoadContentPage();
-}
+    let infoCommande = null;
+    let choixCommande = null;
 
-// ============================================================
-// INJECTION DU RÉCAPITULATIF DANS LA PAGE
-// ============================================================
+    try {
+        infoCommande = rawStep1 ? JSON.parse(rawStep1) : null;
+        choixCommande = rawStep2 ? JSON.parse(rawStep2) : null;
+    } catch (e) {
+        console.error("Erreur de lecture du sessionStorage", e);
+    }
 
-const section = document.querySelector("section");
-const boutons = document.querySelector(".d-flex.justify-content-center");
+    console.log("infoCommande :", infoCommande);
+    console.log("choixCommande :", choixCommande);
 
-const recap = document.createElement("div");
-recap.className = "card text-start shadow-sm mb-5 mx-auto";
-recap.style.maxWidth = "700px";
-
-recap.innerHTML = `
-    <div class="card-header bg-primary text-white fw-bold fs-5">
-        📋 Récapitulatif de votre commande
-    </div>
-    <div class="card-body">
-
-        <h5 class="fw-bold mb-3">👤 Informations client</h5>
-        <ul class="list-unstyled mb-4">
-            <li><strong>Nom :</strong> ${infoCommande.nomComplet}</li>
-            <li><strong>Téléphone :</strong> ${infoCommande.telephone}</li>
-            <li><strong>Email :</strong> ${infoCommande.email}</li>
-            <li><strong>Adresse :</strong> ${infoCommande.numeroRue} ${infoCommande.nomRue}, ${infoCommande.codePostal} ${infoCommande.ville}</li>
-            <li><strong>Date :</strong> ${infoCommande.date}</li>
-            <li><strong>Heure :</strong> ${infoCommande.heure}</li>
-            ${infoCommande.autresInfos ? `<li><strong>Infos complémentaires :</strong> ${infoCommande.autresInfos}</li>` : ""}
-        </ul>
-
-        <hr>
-
-        <h5 class="fw-bold mb-3">🍽️ Détails du menu</h5>
-        <ul class="list-unstyled mb-4">
-            <li><strong>Menu :</strong> ${choixCommande.menu}</li>
-            <li><strong>Entrée :</strong> ${choixCommande.entree}</li>
-            <li><strong>Plat :</strong> ${choixCommande.plat}</li>
-            <li><strong>Dessert :</strong> ${choixCommande.dessert}</li>
-            <li><strong>Boissons :</strong> ${choixCommande.boissons?.join(", ")}</li>
-            <li><strong>Nombre de personnes :</strong> ${choixCommande.nbPersonnes}</li>
-        </ul>
-
-        <hr>
-
-        <h5 class="fw-bold mb-3">💰 Tarification</h5>
-        <ul class="list-unstyled">
-            <li><strong>Prix par personne :</strong> ${choixCommande.prixParPersonne} €</li>
-            <li><strong>Prix de base :</strong> ${choixCommande.prixBase}</li>
-            <li><strong>Remise :</strong> ${choixCommande.remise}</li>
-            <li><strong>Montant remise :</strong> ${choixCommande.montantRemise}</li>
-            <li class="fs-5 fw-bold text-success mt-2">💳 Prix Total : ${choixCommande.prixTotal}</li>
-        </ul>
-
-    </div>
-`;
-
-// Insérer le récap avant les boutons
-section.insertBefore(recap, boutons);
-
-// ============================================================
-// ENVOI DES DONNÉES À L'API SYMFONY
-// ============================================================
-
-// Récupérer l'IRI du menu depuis l'API par son nom
-fetch(`http://localhost:8000/api/menus?nom=${encodeURIComponent(choixCommande.menu)}`)
-.then(res => res.json())
-.then(menuData => {
-    const membres = menuData["hydra:member"];
-
-    if (!membres || membres.length === 0) {
-        console.error("Menu introuvable dans l'API :", choixCommande.menu);
+    // Si une des étapes est manquante, redirection vers l'étape 1
+    if (!infoCommande || !choixCommande || !choixCommande.menuId) {
+        console.warn("Données de commande incomplètes.");
+        alert("Session expirée ou informations manquantes. Veuillez refaire votre choix.");
+        window.location.href = "/infoCommande";
         return;
     }
 
-    const menuIRI = membres[0]["@id"]; // ex: "/api/menus/3"
+    // ============================================================
+    // 2. RECUPÉRATION DU MENU DEPUIS L'API
+    // ============================================================
+    const menuId = choixCommande.menuId;
+    let menuDetails = null;
 
-    const dataCommande = {
-        datePrestation:  infoCommande.date,
-        heureLivraison:  infoCommande.heure,
-        nombrePersonne:  parseInt(choixCommande.nbPersonnes),
-        prixMenu:        parseFloat(choixCommande.prixParPersonne),
-        prixLivraison:   0.0,
-        statut:          "en attente",
-        menu:            menuIRI
-    };
+    try {
+        // Adapté pour gérer menuId ou IRI
+        const response = await fetch(`http://127.0.0.1:8000/api/menus/${menuId}`, {
+            headers: { 'Accept': 'application/json' }
+        });
 
-    console.log("Données envoyées :", dataCommande);
+        if (!response.ok) {
+            throw new Error(`Code HTTP ${response.status}`);
+        }
 
-    return fetch("http://localhost:8000/api/commandes", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/ld+json"
-        },
-        body: JSON.stringify(dataCommande)
-    });
-})
-.then(res => {
-    if (!res) return;
-    return res.json();
-})
-.then(data => {
-    if (!data) return;
-    console.log("Commande enregistrée !", data);
+        menuDetails = await response.json();
+        console.log("Menu chargé :", menuDetails);
 
-    // Nettoyage sessionStorage après confirmation
-    sessionStorage.removeItem("infoCommande");
-    sessionStorage.removeItem("choixCommande");
-})
-.catch(err => {
-    console.error("Erreur lors de l'envoi de la commande :", err);
-});
+    } catch (err) {
+        console.error("Menu introuvable dans l'API :", err);
+        // Au lieu de rediriger directement, on affiche un message clair
+        alert("Impossible de charger les détails du menu sélectionné.");
+        return; 
+    }
+
+    // ============================================================
+    // 3. AFFICHAGE DU RÉCAPITULATIF DANS LE DOM (Si vous avez les éléments)
+    // ============================================================
+    // Exemples d'éléments s'ils existent dans votre HTML :
+    const elemClient = document.getElementById("recapClient");
+    if (elemClient) {
+        elemClient.textContent = `${infoCommande.nomComplet} (${infoCommande.email})`;
+    }
+
+    const elemMenu = document.getElementById("recapMenu");
+    if (elemMenu) {
+        elemMenu.textContent = `${choixCommande.menuNom} x ${choixCommande.nbPersonnes} personnes`;
+    }
+
+    const elemPrix = document.getElementById("recapPrixTotal");
+    if (elemPrix) {
+        elemPrix.textContent = choixCommande.prixTotal;
+    }
+
+    // ============================================================
+    // 4. SOUMISSION & ENREGISTREMENT EN BASE DE DONNÉES (POST API)
+    // ============================================================
+    const btnValider = document.getElementById("btnValiderCommande");
+
+    if (btnValider) {
+        btnValider.addEventListener("click", async function(e) {
+            e.preventDefault();
+
+            btnValider.disabled = true;
+            btnValider.textContent = "Validation en cours...";
+
+            // Nettoyage et conversion des formats pour la BDD
+            const prixMenuFloat = parseFloat(
+                choixCommande.prixTotal ? choixCommande.prixTotal.replace('€', '').trim() : 0
+            );
+
+            // Génération d'un numéro de commande unique (ex: CMD-20260818-XXXX)
+            const numCommande = "CMD-" + Date.now().toString().slice(-8);
+
+            // Construction du JSON à envoyer correspondant à la structure de la table BDD :
+            // (numero_commande, date_commande, date_prestation, heure_livraison, prix_menu, 
+            //  nombre_personne, prix_livraison, statut, pret_materiel, restitution_materiel, menu_id, utilisateur_id)
+            const payloadCommande = {
+                numeroCommande: numCommande,
+                dateCommande: new Date().toISOString(),
+                datePrestation: infoCommande.datePrestation || infoCommande.dateEvent || new Date().toISOString(),
+                heureLivraison: infoCommande.heureLivraison || "12:00",
+                prixMenu: prixMenuFloat,
+                nombrePersonne: parseInt(choixCommande.nbPersonnes),
+                prixLivraison: parseFloat(infoCommande.fraisLivraison || 0),
+                statut: "EN_ATTENTE", // ou "VALIDE"
+                pretMateriel: false,
+                restitutionMateriel: false,
+
+                // Si vous utilisez API Platform, les relations se passent sous forme d'IRI "/api/..." :
+                menu: `/api/menus/${menuId}`,
+                // Si l'utilisateur est connecté, passer son IRI, sinon null
+                utilisateur: infoCommande.utilisateurId ? `/api/utilisateurs/${infoCommande.utilisateurId}` : null
+            };
+
+            try {
+                const postRes = await fetch("http://127.0.0.1:8000/api/commandes", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify(payloadCommande)
+                });
+
+                if (postRes.ok || postRes.status === 201) {
+                    const commandeCreee = await postRes.json();
+                    console.log("Commande créée avec succès !", commandeCreee);
+
+                    // Vider la session
+                    sessionStorage.removeItem("infoCommande");
+                    sessionStorage.removeItem("choixCommande");
+
+                    alert("Votre commande a été enregistrée avec succès !");
+
+                    // Redirection finale
+                    if (window.router && typeof window.router.navigate === "function") {
+                        window.router.navigate("/succesCommande");
+                    } else {
+                        window.location.href = "/succesCommande";
+                    }
+                } else {
+                    const errData = await postRes.json();
+                    console.error("Erreur serveur lors de la création de la commande :", errData);
+                    alert("Erreur lors de la validation de la commande. Veuillez réessayer.");
+                    btnValider.disabled = false;
+                    btnValider.textContent = "Valider ma commande";
+                }
+
+            } catch (err) {
+                console.error("Erreur réseau :", err);
+                alert("Erreur de connexion au serveur.");
+                btnValider.disabled = false;
+                btnValider.textContent = "Valider ma commande";
+            }
+        });
+    }
+}
