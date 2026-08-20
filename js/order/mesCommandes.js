@@ -10,7 +10,6 @@
 async function chargerCommandesClient(container) {
     console.log("🔄 Lancement de la récupération des commandes...");
 
-    // 1. Récupération du token depuis les cookies ou fonctions d'aide
     function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
@@ -19,7 +18,6 @@ async function chargerCommandesClient(container) {
     }
 
     const token = (typeof getToken === 'function' ? getToken() : null) || getCookie("accesstoken");
-    let currentUserId = (typeof getUserId === 'function' ? getUserId() : null) || getCookie("userId");
 
     const headers = {
         'Accept': 'application/json, application/ld+json, */*',
@@ -30,48 +28,21 @@ async function chargerCommandesClient(container) {
     }
 
     try {
-        // 2. Si l'ID utilisateur n'est pas en cookie, interrogation de /api/account/me
-        if (!currentUserId && token) {
-            console.log("🔍 Récupération des données utilisateur via /api/account/me...");
-            const meRes = await fetch("http://127.0.0.1:8000/api/account/me", { headers });
-            
-            if (meRes.ok) {
-                const meData = await meRes.json();
-                currentUserId = meData.utilisateurId || meData.id;
-                console.log("👤 Utilisateur identifié :", currentUserId);
-            } else {
-                console.warn("⚠️ Impossible de vérifier le profil (statut :", meRes.status, ")");
-            }
-        }
-
-        // 3. Récupération des commandes
-        const res = await fetch("http://127.0.0.1:8000/api/commandes", { headers });
+        // 1. Récupération des commandes (le serveur PHP s'occupe de renvoyer UNIQUEMENT celles de l'utilisateur connecté)
+        const res = await fetch("http://127.0.0.1:8000/api/mes-commandes", { 
+            headers,
+            cache: 'no-store' // Forcer la mise à jour pour éviter tout cache de réponse
+        });
+        
         if (!res.ok) throw new Error("Impossible de charger les commandes.");
 
         const data = await res.json();
-        const toutesLesCommandes = data['hydra:member'] || data.member || data || [];
+        // Le PHP renvoie directement le tableau des commandes du client connecté
+        const mesCommandes = data['hydra:member'] || data.member || data || [];
 
-        // 4. FILTRAGE : Filtrer strict si currentUserId existe
-        const mesCommandes = toutesLesCommandes.filter(cmd => {
-            if (!currentUserId) return true;
+        console.log(`📦 Commandes reçues pour cet utilisateur : ${mesCommandes.length}`);
 
-            let cmdUserId = null;
-            const uField = cmd.utilisateur || cmd.utilisateur_id || cmd.user;
-
-            if (typeof uField === 'number' || typeof uField === 'string') {
-                cmdUserId = String(uField).split('/').pop();
-            } else if (Array.isArray(uField) && uField.length > 0) {
-                cmdUserId = typeof uField[0] === 'object' ? String(uField[0].utilisateurId || uField[0].id) : String(uField[0]).split('/').pop();
-            } else if (uField && typeof uField === 'object') {
-                cmdUserId = String(uField.utilisateurId || uField.id || '');
-            }
-
-            return String(cmdUserId) === String(currentUserId);
-        });
-
-        console.log(`📦 Commandes affichées : ${mesCommandes.length} / ${toutesLesCommandes.length}`);
-
-        // 5. Rendu HTML
+        // 2. Rendu HTML
         container.innerHTML = "";
 
         if (mesCommandes.length === 0) {
@@ -84,15 +55,15 @@ async function chargerCommandesClient(container) {
 
         mesCommandes.forEach(cmd => {
             const idCommande = cmd.id || cmd['@id']?.split('/').pop() || 'N/A';
-            const numCommande = cmd.numeroCommande || cmd.numero_commande || idCommande;
-            const dateCmd = cmd.dateCommande || cmd.date_commande ? new Date(cmd.dateCommande || cmd.date_commande).toLocaleDateString('fr-FR') : 'N/A';
-            const datePrest = cmd.datePrestation || cmd.date_prestation ? new Date(cmd.datePrestation || cmd.date_prestation).toLocaleDateString('fr-FR') : 'N/A';
-            const heureLiv = cmd.heureLivraison || cmd.heure_livraison || 'Non spécifiée';
+            const numCommande = cmd.numeroCommande || idCommande;
+            const dateCmd = cmd.dateCommande ? new Date(cmd.dateCommande).toLocaleDateString('fr-FR') : 'N/A';
+            const datePrest = cmd.datePrestation ? new Date(cmd.datePrestation).toLocaleDateString('fr-FR') : 'N/A';
+            const heureLiv = cmd.heureLivraison || 'Non spécifiée';
 
-            const prixMenu = parseFloat(cmd.prixMenu || cmd.prix_menu || 0);
-            const prixLivraison = parseFloat(cmd.prixLivraison || cmd.prix_livraison || 0);
+            const prixMenu = parseFloat(cmd.prixMenu || 0);
+            const prixLivraison = parseFloat(cmd.prixLivraison || 0);
             const total = prixMenu + prixLivraison;
-            const nbPersonnes = cmd.nombrePersonne || cmd.nombre_personne || 1;
+            const nbPersonnes = cmd.nombrePersonne || 1;
             const statut = cmd.statut || 'En attente';
 
             let badgeColor = 'bg-warning text-dark';
